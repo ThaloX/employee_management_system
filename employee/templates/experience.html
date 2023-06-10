@@ -1,4 +1,4 @@
-{% extends "Emp_base.html" %}
+{% extends "emp_base.html" %}
 
 {% block main %}
 <div class="card shadow m-2">
@@ -10,35 +10,39 @@
                 {% csrf_token %}
 
                 {% if error %}
-                    <p>{{ error }}</p>
+                <p>{{ error }}</p>
                 {% endif %}
 
                 <div class="form-row">
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label style="color: black;">Company</label>
-                            <input type="text" name="company" class="form-control" placeholder="Enter Company" value="{{ experience.company|default_if_none:'' }}">
+                            <input type="text" name="company" class="form-control" placeholder="Enter Company"
+                                   value="{{ experience.company|default_if_none:'' }}">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label style="color: black;">Position</label>
-                            <input type="text" name="position" class="form-control" placeholder="Enter Position" value="{{ experience.position|default_if_none:'' }}">
+                            <input type="text" name="position" class="form-control" placeholder="Enter Position"
+                                   value="{{ experience.position|default_if_none:'' }}">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label style="color: black;">Start Date</label>
-                            <input type="date" name="start_date" class="form-control" value="{{ experience.start_date|default_if_none:'' }}">
+                            <input type="date" name="start_date" class="form-control"
+                                   value="{{ experience.start_date|default_if_none:'' }}">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label style="color: black;">End Date</label>
-                            <input type="date" name="end_date" class="form-control" value="{{ experience.end_date|default_if_none:'' }}">
+                            <input type="date" name="end_date" class="form-control"
+                                   value="{{ experience.end_date|default_if_none:'' }}">
                         </div>
                     </div>
 
@@ -50,7 +54,9 @@
                     </div>
                 </div>
 
-                <button type="submit" class="m-2 px-3 btn btn-primary" style="background-color: rgb(10, 202, 138);">Save</button>
+                <button type="submit" class="m-2 px-3 btn btn-primary" style="background-color: rgb(10, 202, 138);">
+                    Save
+                </button>
             </form>
         </div>
     </div>
@@ -59,16 +65,16 @@
 <div id="table-container">
     <table class="table table-bordered">
         <thead>
-            <tr>
-                <th>Company</th>
-                <th>Position</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Description</th>
-            </tr>
+        <tr>
+            <th>Company</th>
+            <th>Position</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Description</th>
+        </tr>
         </thead>
         <tbody id="experience-table-body">
-            <!-- Table rows will be dynamically added here -->
+        <!-- Table rows will be dynamically added here -->
         </tbody>
     </table>
 </div>
@@ -120,6 +126,7 @@
         // Reset the form
         document.getElementById("experience-form").reset();
     });
+
 </script>
 
 {% endblock %}

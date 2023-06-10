@@ -1,17 +1,16 @@
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
 from .models import *
 
 
-def Index(request):
-    return render(request, 'Index.html')
+def index(request):
+    return render(request, 'index.html')
 
 
-def Registration(request):
+def registration(request):
     error = ""
     if request.method == "POST":
         fn = request.POST['first_name']
@@ -28,23 +27,23 @@ def Registration(request):
         try:
             User = get_user_model()
             user = User.objects.create_user(first_name=fn, last_name=ln, username=username, password=pwd, email=em)
-            Employee_Details.objects.create(user=user)
-            Employee_Experience.objects.create(user=user)
-            Employee_Education.objects.create(user=user)
+            EmployeeDetails.objects.create(user=user)
+            EmployeeExperience.objects.create(user=user)
+            EmployeeEducation.objects.create(user=user)
             error = "No"
         except:
             error = "Yes"
-    return render(request, 'Registration.html')
+    return render(request, 'registration.html')
 
 
-def Emp_log(request):
+def emp_log(request):
     error1 = ""
     if request.method == 'POST':
         mail = request.POST['mail']
         pwd = request.POST["password"]
 
-        User = get_user_model()
-        user = User.objects.filter(email=mail).first()
+        user_model = get_user_model()
+        user = user_model.objects.filter(email=mail).first()
 
         if user is not None:
             auth_user = authenticate(request, username=user.username, password=pwd)
@@ -56,19 +55,19 @@ def Emp_log(request):
                 error1 = "Yes"
         else:
             error1 = "Yes"
-    return render(request, 'Emp_log.html', {'error1': error1})
+    return render(request, 'emp_log.html', {'error1': error1})
 
 
-def Emp_home(request):
+def emp_home(request):
     if not request.user.is_authenticated:
-        return redirect('Emp_Login')
-    return render(request, 'Emp_home.html')
+        return redirect('emp_login')
+    return render(request, 'emp_home.html')
 
 
-def Profile(request):
+def profile(request):
     error = ""
     user = request.user
-    employee = Employee_Details.objects.filter(user=user).first()
+    employee = EmployeeDetails.objects.filter(user=user).first()
 
     if request.method == "POST":
         fn = request.POST.get('first_name', '')
@@ -101,13 +100,13 @@ def Profile(request):
         'error': error
     }
 
-    return render(request, 'Profile.html', context)
+    return render(request, 'profile.html', context)
 
 
-def Experience(request):
+def experience(request):
     error = ""
     user = request.user
-    experience, created = Employee_Experience.objects.get_or_create(employee=user)
+    experience_, created = EmployeeExperience.objects.get_or_create(employee=user)
 
     if request.method == 'POST':
         company = request.POST.get('company', '')
@@ -117,34 +116,34 @@ def Experience(request):
         description = request.POST.get('description', '')
 
         if start_date:  # Ensure start_date is not empty
-            experience.start_date = start_date
+            experience_.start_date = start_date
         if end_date:  # Ensure end_date is not empty
-            experience.end_date = end_date
+            experience_.end_date = end_date
 
-        experience.company = company
-        experience.position = position
-        experience.description = description
+        experience_.company = company
+        experience_.position = position
+        experience_.description = description
 
         try:
-            experience.full_clean()  # Validate the instance
-            experience.save()
+            experience_.full_clean()  # Validate the instance
+            experience_.save()
             # Handle successful save or update
         except ValidationError as e:
             print(e)  # Print validation errors to the console
             error = "Yes"
 
     context = {
-        'experience': experience,
+        'experience': experience_,
         'error': error
     }
 
-    return render(request, 'Experience.html', context)
+    return render(request, 'experience.html', context)
 
 
-def Admin_Login(request):
-    return render(request, 'Admin_Login.html')
+def admin_login(request):
+    return render(request, 'admin_login.html')
 
 
-def Logout(request):
+def log_out(request):
     logout(request)
-    return redirect('Index')
+    return redirect('index')

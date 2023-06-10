@@ -4,14 +4,13 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('Employee', '0005_rename_employeeexperience_employee_experience_and_more'),
+        ('employee', '0005_rename_employeeexperience_employee_experience_and_more'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='employee_experience',
+            model_name='EmployeeExperience',
             name='start_date',
             field=models.DateField(null=True),
         ),

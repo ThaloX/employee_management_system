@@ -1,4 +1,4 @@
-{% extends "Emp_base.html" %}
+{% extends "emp_base.html" %}
 
 {% block main %}
 
@@ -9,8 +9,9 @@
         <div class="card shadow">
             <div class="card-body">
                 <h4 class="text-success" style="color: rgb(77, 225, 176)">Welcome back!</h4>
-                <h5 class="text-capitalize" style="color: rgb(77, 225, 176)">{{request.user.first_name}} {{request.user.last_name}}</h5>
-                
+                <h5 class="text-capitalize" style="color: rgb(77, 225, 176)">{{request.user.first_name}}
+                    {{request.user.last_name}}</h5>
+
             </div>
         </div>
     </div>
