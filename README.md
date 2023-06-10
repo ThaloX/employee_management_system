@@ -1,2 +1,2 @@
-# employee_management_system
+# Employee Management System
 Proiect TAP IAISC 1
