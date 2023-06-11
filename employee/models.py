@@ -72,7 +72,6 @@ class EmployeeEducation(models.Model):
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     description = models.TextField(blank=True)
-    certificates = models.FileField(upload_to='certificates/', blank=True, null=True)
 
     def __str__(self):
         return self.employee.username

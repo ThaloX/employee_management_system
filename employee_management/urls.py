@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+
 from employee.views import *
 
 urlpatterns = [
@@ -26,7 +27,6 @@ urlpatterns = [
     path('emp_home', view_homepage, name='emp_home'),
     path('profile', view_profile, name='profile'),
     path('logout', view_logout, name='logout'),
-    path('admin_login', view_admin_login, name='admin_login'),
     path('experience', view_experience, name='experience'),
     path('remove_experience/', view_remove_experience, name='remove_experience'),
     path('education', view_education, name='education'),
