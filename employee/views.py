@@ -94,6 +94,7 @@ def view_homepage(request):
         return redirect('emp_login')
     return render(request, 'emp_home.html')
 
+
 @login_required
 def view_profile(request):
     error = ""
@@ -309,6 +310,19 @@ def view_password_change(request):
 
     return render(request, 'password_change.html', {'form': form})
 
+
 def view_logout(request):
     logout(request)
     return redirect('index')
+
+
+@login_required
+def view_delete_account(request):
+    if request.method == 'POST':
+        # Delete the user account
+        user = request.user
+        user.delete()
+        logout(request)
+        return redirect('index')  # Replace 'home' with the appropriate URL name for your home page
+
+    return render(request, 'delete_account.html')  # Create the delete_account.html template

@@ -32,4 +32,5 @@ urlpatterns = [
     path('education', view_education, name='education'),
     path('remove_education/', view_remove_education, name='remove_education'),
     path('password_change/', view_password_change, name='password_change'),
+    path('delete_account/', view_delete_account, name='delete_account'),
 ]
