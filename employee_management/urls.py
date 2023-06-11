@@ -20,12 +20,15 @@ from employee.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name='index'),
-    path('registration', registration, name='registration'),
-    path('emp_log', emp_log, name='emp_log'),
-    path('emp_home', emp_home, name='emp_home'),
-    path('profile', profile, name='profile'),
-    path('logout', log_out, name='logout'),
-    path('admin_login', admin_login, name='admin_login'),
-    path('experience', experience, name='experience'),
+    path('', view_index, name='index'),
+    path('registration', view_registration, name='registration'),
+    path('emp_log', view_login, name='emp_log'),
+    path('emp_home', view_homepage, name='emp_home'),
+    path('profile', view_profile, name='profile'),
+    path('logout', view_logout, name='logout'),
+    path('admin_login', view_admin_login, name='admin_login'),
+    path('experience', view_experience, name='experience'),
+    path('remove_experience/', view_remove_experience, name='remove_experience'),
+    # path('education', view_education, name='education'),
+    # path('remove_education/', view_remove_education, name='remove_education'),
 ]

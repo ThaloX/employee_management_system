@@ -63,69 +63,108 @@
 </div>
 
 <div id="table-container">
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Company</th>
-            <th>Position</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Description</th>
-        </tr>
-        </thead>
-        <tbody id="experience-table-body">
-        <!-- Table rows will be dynamically added here -->
-        </tbody>
-    </table>
+    <form id="remove-form" action="/remove_experience/" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="row_id" id="row-id-input" value="">
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Position</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Description</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody id="experience-table-body">
+                {% for experience_entry in experiences %}
+                <tr id="experience-row-{{ experience_entry.id }}">
+                    <td>{{ experience_entry.company }}</td>
+                    <td>{{ experience_entry.position }}</td>
+                    <td>{{ experience_entry.start_date }}</td>
+                    <td>{{ experience_entry.end_date }}</td>
+                    <td>{{ experience_entry.description }}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="removeExperienceRow({{ experience_entry.id }})">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
 </div>
 
 <script>
     // Function to add a new row to the experience table
-    function addExperienceRow(company, position, startDate, endDate, description) {
-        var tableBody = document.getElementById("experience-table-body");
+    function addExperienceRow(experience) {
+        // Create a new row
+        var newRow = document.createElement('tr');
+        newRow.id = 'experience-row-' + experience.id;
 
-        var newRow = document.createElement("tr");
-
-        var companyCell = document.createElement("td");
-        companyCell.textContent = company;
+        // Create the cells for the new row
+        var companyCell = document.createElement('td');
+        companyCell.textContent = experience.company;
         newRow.appendChild(companyCell);
 
-        var positionCell = document.createElement("td");
-        positionCell.textContent = position;
+        var positionCell = document.createElement('td');
+        positionCell.textContent = experience.position;
         newRow.appendChild(positionCell);
 
-        var startDateCell = document.createElement("td");
-        startDateCell.textContent = startDate;
+        var startDateCell = document.createElement('td');
+        startDateCell.textContent = experience.start_date;
         newRow.appendChild(startDateCell);
 
-        var endDateCell = document.createElement("td");
-        endDateCell.textContent = endDate;
+        var endDateCell = document.createElement('td');
+        endDateCell.textContent = experience.end_date;
         newRow.appendChild(endDateCell);
 
-        var descriptionCell = document.createElement("td");
-        descriptionCell.textContent = description;
+        var descriptionCell = document.createElement('td');
+        descriptionCell.textContent = experience.description;
         newRow.appendChild(descriptionCell);
 
+        var removeCell = document.createElement('td');
+        var removeButton = document.createElement('button');
+        removeButton.className = 'btn btn-danger';
+        removeButton.textContent = 'Remove';
+        removeButton.setAttribute('onclick', 'removeExperienceRow(' + experience.id + ')');
+        removeCell.appendChild(removeButton);
+        newRow.appendChild(removeCell);
+
+        // Append the new row to the table body
+        var tableBody = document.getElementById('experience-table-body');
         tableBody.appendChild(newRow);
     }
 
-    // Event listener for the form submission
-    document.getElementById("experience-form").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent form submission
 
-        // Get the form values
-        var company = document.querySelector("input[name='company']").value;
-        var position = document.querySelector("input[name='position']").value;
-        var startDate = document.querySelector("input[name='start_date']").value;
-        var endDate = document.querySelector("input[name='end_date']").value;
-        var description = document.querySelector("textarea[name='description']").value;
+    // Function to remove a row from the experience table
+    function removeExperienceRow(rowId) {
+        // Set the value of the hidden input field to the row ID
+        document.getElementById('row-id-input').value = rowId;
 
-        // Add a new row to the experience table
-        addExperienceRow(company, position, startDate, endDate, description);
+        // Submit the form
+        document.getElementById('remove-form').submit();
+    }
 
-        // Reset the form
-        document.getElementById("experience-form").reset();
-    });
+    // Function to fetch and display existing entries
+    function fetchExistingEntries() {
+        var url = "/experience"; // Replace with your backend endpoint URL
+        fetch(url)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                // Process the received data and add rows to the experience table
+                for (var i = 0; i < data.length; i++) {
+                    var entry = data[i];
+                    addExperienceRow(entry.company, entry.position, entry.start_date, entry.end_date, entry.description);
+                }
+            })
+            .catch(function (error) {
+                console.error("Error fetching existing entries:", error);
+            });
+    }
 
 </script>
 
