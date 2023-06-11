@@ -1,8 +1,9 @@
 from datetime import datetime
 import logging
 
-from django.contrib.auth import logout
+from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.db import OperationalError, IntegrityError
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login
@@ -294,6 +295,19 @@ def view_remove_education(request):
 def view_admin_login(request):
     return render(request, 'admin_login.html')
 
+
+@login_required
+def view_password_change(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Update the session with the new password hash
+            return redirect('emp_home')  # Redirect to the home page or any other desired page
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(request, 'password_change.html', {'form': form})
 
 def view_logout(request):
     logout(request)

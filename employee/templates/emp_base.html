@@ -31,7 +31,34 @@
             border: 2px solid rgb(10, 202, 138);
         }
 
+         /* Updated styles for password change form */
+        .password-form-container {
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+        }
 
+        .password-form-container input[type="text"],
+        .password-form-container input[type="password"],
+        .password-form-container button {
+            color: #333;
+        }
+
+        .password-form-container .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .password-form-container .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+        .errorlist {
+            color: red !important;
+        }
     </style>
 </head>
 
@@ -48,7 +75,7 @@
                 <a href="{% url 'profile' %}" class="list-group-item list-group-item-action">Profile</a>
                 <a href="{% url 'experience' %}" class="list-group-item list-group-item-action">Experience</a>
                 <a href="{% url 'education' %}" class="list-group-item list-group-item-action">Education</a>
-                <a href="#" class="list-group-item list-group-item-action">Change password</a>
+                <a href="{% url 'password_change' %}" class="list-group-item list-group-item-action">Change Password</a>
                 <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">Logout</a>
             </div>
         </div>
