@@ -3,10 +3,10 @@
 {% block main %}
 <div class="card shadow m-2">
     <div class="card-body">
-        <h5 class="p-2" style="border-bottom: 2px solid rgb(49, 50, 49); color: rgb(10, 202, 138);">Experience</h5>
+        <h5 class="p-2" style="border-bottom: 2px solid rgb(49, 50, 49); color: rgb(10, 202, 138);">Education</h5>
 
         <div class="container-fluid">
-            <form id="experience-form" method="post">
+            <form id="education-form" method="post">
                 {% csrf_token %}
 
                 {% if error %}
@@ -16,17 +16,17 @@
                 <div class="form-row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label style="color: black;">Company</label>
-                            <input type="text" name="company" class="form-control" placeholder="Enter Company"
-                                   value="{{ experience.company|default_if_none:'' }}" required>
+                            <label style="color: black;">Institution</label>
+                            <input type="text" name="institution" class="form-control" placeholder="Enter Institution"
+                                   value="{{ education.institution|default_if_none:'' }}" required>
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label style="color: black;">Position</label>
-                            <input type="text" name="position" class="form-control" placeholder="Enter Position"
-                                   value="{{ experience.position|default_if_none:'' }}" required>
+                            <label style="color: black;">Degree</label>
+                            <input type="text" name="degree" class="form-control" placeholder="Enter Degree"
+                                   value="{{ education.degree|default_if_none:'' }}" required>
                         </div>
                     </div>
 
@@ -34,22 +34,22 @@
                         <div class="form-group">
                             <label style="color: black;">Start Date</label>
                             <input type="date" name="start_date" class="form-control"
-                                   value="{{ experience.start_date|default_if_none:'' }}" required>
+                                   value="{{ education.start_date|default_if_none:'' }}" required>
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label style="color: black;">End Date</label>
+                            <label style="color: black;">Graduation Date</label>
                             <input type="date" name="end_date" class="form-control"
-                                   value="{{ experience.end_date|default_if_none:'' }}" required>
+                                   value="{{ education.end_date|default_if_none:'' }}" required>
                         </div>
                     </div>
 
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label style="color: black;">Description</label>
-                            <textarea name="description" class="form-control" placeholder="Enter Description">{{ experience.description|default_if_none:'' }}</textarea>
+                            <textarea name="description" class="form-control" placeholder="Enter Description">{{ education.description|default_if_none:'' }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -63,31 +63,31 @@
 </div>
 
 <div id="table-container">
-    <form id="remove-form" action="/remove_experience/" method="post">
+    <form id="remove-form" action="/remove_education/" method="post">
     {% csrf_token %}
     <input type="hidden" name="row_id" id="row-id-input" value="">
 
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Company</th>
-                    <th>Position</th>
+                    <th>Institution</th>
+                    <th>Degree</th>
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Description</th>
                     <th>Remove</th>
                 </tr>
             </thead>
-            <tbody id="experience-table-body">
-                {% for experience_entry in experiences %}
-                <tr id="experience-row-{{ experience_entry.id }}">
-                    <td>{{ experience_entry.company }}</td>
-                    <td>{{ experience_entry.position }}</td>
-                    <td>{{ experience_entry.start_date }}</td>
-                    <td>{{ experience_entry.end_date }}</td>
-                    <td>{{ experience_entry.description }}</td>
+            <tbody id="education-table-body">
+                {% for education_entry in educations %}
+                <tr id="education-row-{{ education_entry.id }}">
+                    <td>{{ education_entry.institution }}</td>
+                    <td>{{ education_entry.degree }}</td>
+                    <td>{{ education_entry.start_date }}</td>
+                    <td>{{ education_entry.end_date }}</td>
+                    <td>{{ education_entry.description }}</td>
                     <td>
-                        <button class="btn btn-danger" onclick="removeExperienceRow({{ experience_entry.id }})">Remove</button>
+                        <button class="btn btn-danger" onclick="removeEducationRow({{ education_entry.id }})">Remove</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -97,49 +97,49 @@
 </div>
 
 <script>
-    // Function to add a new row to the experience table
-    function addExperienceRow(experience) {
+    // Function to add a new row to the education table
+    function addEducationRow(education) {
         // Create a new row
         var newRow = document.createElement('tr');
-        newRow.id = 'experience-row-' + experience.id;
+        newRow.id = 'education-row-' + education.id;
 
         // Create the cells for the new row
-        var companyCell = document.createElement('td');
-        companyCell.textContent = experience.company;
-        newRow.appendChild(companyCell);
+        var institutionCell = document.createElement("td");
+        institutionCell.textContent = institution;
+        newRow.appendChild(institutionCell);
 
-        var positionCell = document.createElement('td');
-        positionCell.textContent = experience.position;
-        newRow.appendChild(positionCell);
+        var degreeCell = document.createElement("td");
+        degreeCell.textContent = degree;
+        newRow.appendChild(degreeCell);
 
         var startDateCell = document.createElement('td');
-        startDateCell.textContent = experience.start_date;
+        startDateCell.textContent = education.start_date;
         newRow.appendChild(startDateCell);
 
         var endDateCell = document.createElement('td');
-        endDateCell.textContent = experience.end_date;
+        endDateCell.textContent = education.end_date;
         newRow.appendChild(endDateCell);
 
         var descriptionCell = document.createElement('td');
-        descriptionCell.textContent = experience.description;
+        descriptionCell.textContent = education.description;
         newRow.appendChild(descriptionCell);
 
         var removeCell = document.createElement('td');
         var removeButton = document.createElement('button');
         removeButton.className = 'btn btn-danger';
         removeButton.textContent = 'Remove';
-        removeButton.setAttribute('onclick', 'removeExperienceRow(' + experience.id + ')');
+        removeButton.setAttribute('onclick', 'removeEducationRow(' + education.id + ')');
         removeCell.appendChild(removeButton);
         newRow.appendChild(removeCell);
 
         // Append the new row to the table body
-        var tableBody = document.getElementById('experience-table-body');
+        var tableBody = document.getElementById('education-table-body');
         tableBody.appendChild(newRow);
     }
 
 
-    // Function to remove a row from the experience table
-    function removeExperienceRow(rowId) {
+    // Function to remove a row from the education table
+    function removeEducationRow(rowId) {
         // Set the value of the hidden input field to the row ID
         document.getElementById('row-id-input').value = rowId;
 
@@ -149,16 +149,16 @@
 
     // Function to fetch and display existing entries
     function fetchExistingEntries() {
-        var url = "/experience"; // Replace with your backend endpoint URL
+        var url = "/education"; // Replace with your backend endpoint URL
         fetch(url)
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                // Process the received data and add rows to the experience table
+                // Process the received data and add rows to the education table
                 for (var i = 0; i < data.length; i++) {
                     var entry = data[i];
-                    addExperienceRow(entry.company, entry.position, entry.start_date, entry.end_date, entry.description);
+                    addEducationRow(entry.institution, entry.degree, entry.start_date, entry.end_date, entry.description);
                 }
             })
             .catch(function (error) {

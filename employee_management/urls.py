@@ -29,6 +29,6 @@ urlpatterns = [
     path('admin_login', view_admin_login, name='admin_login'),
     path('experience', view_experience, name='experience'),
     path('remove_experience/', view_remove_experience, name='remove_experience'),
-    # path('education', view_education, name='education'),
-    # path('remove_education/', view_remove_education, name='remove_education'),
+    path('education', view_education, name='education'),
+    path('remove_education/', view_remove_education, name='remove_education'),
 ]

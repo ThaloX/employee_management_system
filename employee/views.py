@@ -35,9 +35,7 @@ def view_registration(request):
             user_model = get_user_model()
             user = user_model.objects.create_user(first_name=fn, last_name=ln, username=username, password=pwd,
                                                   email=em)
-            # EmployeeDetails.objects.create(user=user)
-            # EmployeeExperience.objects.create(employee=user)
-            # EmployeeEducation.objects.create(employee=user)
+            EmployeeDetails.objects.create(user=user)
             error = "No"
             cause = ""
 
@@ -138,7 +136,6 @@ def view_profile(request):
 
 def view_experience(request):
     user = request.user
-    error = "No"
 
     if request.method == 'POST':
         company = request.POST.get('company', '')
@@ -153,7 +150,7 @@ def view_experience(request):
             end_date = make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
 
         try:
-            experience = EmployeeExperience.objects.create(
+            EmployeeExperience.objects.create(
                 employee=user,
                 company=company,
                 position=position,
@@ -164,7 +161,10 @@ def view_experience(request):
             # Handle successful insertion
         except IntegrityError as ex:
             logging.error(ex)  # Print integrity error to the console
-            error = "Yes"
+            context = {
+                'error': "Yes",
+            }
+            return render(request, 'experience.html', context)
 
     elif request.method == 'GET':
         # Retrieve all existing entries for the user
@@ -189,50 +189,64 @@ def view_experience(request):
 
         return render(request, 'experience.html', context)
 
-    context = {
-        'experience': experience,
-        'error': error
-    }
-
-    return render(request, 'experience.html', context)
-
 
 def view_education(request):
     user = request.user
-    education, created = EmployeeEducation.objects.get_or_create(employee=user)
-
     error = "No"
 
     if request.method == 'POST':
-        company = request.POST.get('company', '')
-        position = request.POST.get('position', '')
+        institution = request.POST.get('institution', '')
+        degree = request.POST.get('degree', '')
         start_date = request.POST.get('start_date', '')
         end_date = request.POST.get('end_date', '')
         description = request.POST.get('description', '')
 
         if start_date:  # Ensure start_date is not empty
-            education.start_date = start_date
+            start_date = make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
         if end_date:  # Ensure end_date is not empty
-            education.end_date = end_date
-
-        education.company = company
-        education.position = position
-        education.description = description
+            end_date = make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
 
         try:
-            education.full_clean()  # Validate the instance
-            education.save()
-            # Handle successful save or update
-        except ValidationError as ex:
-            logging.error(ex)  # Print validation errors to the console
-            error = "Yes"
+            EmployeeEducation.objects.create(
+                employee=user,
+                institution=institution,
+                degree=degree,
+                start_date=start_date,
+                end_date=end_date,
+                description=description
+            )
+            # Handle successful insertion
+        except IntegrityError as ex:
+            logging.error(ex)  # Print integrity error to the console
+            context = {
+                'error': "Yes",
+            }
+            return render(request, 'education.html', context)
 
-    context = {
-        'education': education,
-        'error': error
-    }
+        return redirect('education')
 
-    return render(request, 'education.html', context)
+    elif request.method == 'GET':
+        # Retrieve all existing entries for the user
+        educations = EmployeeEducation.objects.filter(employee=user)
+
+        # Serialize the educations into a list of dictionaries
+        serialized_educations = []
+
+        for education in educations:
+            serialized_educations.append({
+                'id': education.id,
+                'institution': education.institution,
+                'degree': education.degree,
+                'start_date': education.start_date,
+                'end_date': education.end_date,
+                'description': education.description,
+            })
+
+        context = {
+            'educations': serialized_educations
+        }
+
+        return render(request, 'education.html', context)
 
 
 def view_remove_experience(request):
@@ -242,11 +256,23 @@ def view_remove_experience(request):
         try:
             experience = EmployeeExperience.objects.get(id=row_id)
             experience.delete()
-        except EmployeeEducation.DoesNotExist:
+        except EmployeeExperience.DoesNotExist:
             pass
 
     return redirect('experience')
 
+
+def view_remove_education(request):
+    if request.method == 'POST':
+        row_id = request.POST.get('row_id')
+
+        try:
+            education = EmployeeEducation.objects.get(id=row_id)
+            education.delete()
+        except EmployeeEducation.DoesNotExist:
+            pass
+
+    return redirect('education')
 
 
 def view_admin_login(request):
