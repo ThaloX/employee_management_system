@@ -28,6 +28,7 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, username, password, **extra_fields):
         email = f"{username}@ems.tap"
+        extra_fields.setdefault("username", username)
         user = self._create_user(email, password, True, True, **extra_fields)
         user.save(using=self._db)
         return user
