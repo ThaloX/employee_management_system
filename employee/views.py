@@ -2,10 +2,10 @@ from datetime import datetime
 import logging
 
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.db import OperationalError, IntegrityError
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login
-from django.core.exceptions import ValidationError
 from django.utils.timezone import make_aware
 
 from .models import *
@@ -93,30 +93,40 @@ def view_homepage(request):
         return redirect('emp_login')
     return render(request, 'emp_home.html')
 
-
+@login_required
 def view_profile(request):
     error = ""
     user = request.user
-    employee = EmployeeDetails.objects.filter(user=user).first()
+    try:
+        employee = EmployeeDetails.objects.get(user=user)
+    except EmployeeDetails.DoesNotExist:
+        employee = None
 
     if request.method == "POST":
+        # Retrieve form data from POST request
         fn = request.POST.get('first_name', '')
         ln = request.POST.get('last_name', '')
-        sc = request.POST.get('sccode', '')
-        dep = request.POST.get('empdep', '')
+        sc = request.POST.get('subcontractor_code', '')
+        dep = request.POST.get('department', '')
         fct = request.POST.get('function', '')
         con = request.POST.get('contact', '')
-        jd = request.POST.get('joindate', '')
+        jd = request.POST.get('join_date', '')
         gd = request.POST.get('gender', None)
 
+        # Update user and employee fields
         user.first_name = fn
         user.last_name = ln
         user.username = sc or (fn.lower() + ln.lower())  # Set username as sccode or combination of first and last name
-        employee.empdep = dep
-        employee.function = fct
-        employee.contact = con
-        employee.joindate = jd
-        employee.gender = gd
+
+        if employee:
+            employee.department = dep
+            employee.function = fct
+            employee.contact = con
+            employee.join_date = jd
+            employee.gender = gd
+        else:
+            # Create new EmployeeDetails object if it doesn't exist for the user
+            employee = EmployeeDetails(user=user, empdep=dep, function=fct, contact=con, join_date=jd, gender=gd)
 
         try:
             user.save()
@@ -124,11 +134,17 @@ def view_profile(request):
             # Handle successful save or update
         except Exception as ex:
             logging.error(ex)
-            error = "Yes"
+
+        return redirect('profile')
+
+    # Handle GET request
+    employee.join_date = employee.join_date.strftime('%Y-%m-%d') if employee and employee.join_date else ''
+    if not employee.user.username.isdigit():
+        employee.user.username = ""
 
     context = {
         'employee': employee,
-        'error': error
+        'error': error,
     }
 
     return render(request, 'profile.html', context)

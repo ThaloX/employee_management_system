@@ -26,8 +26,8 @@
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label style="color: black;">Subcontractor security code</label>
-                            <input type="text" name="sccode" class="form-control" placeholder="Only if you are a subcontractor" pattern="[0-9]+" value="{{ employee.user.sccode|default_if_none:'' }}" onfocus="clearPlaceholder(this)">
-                            {% if employee.user.sccode %}
+                            <input type="text" name="subcontractor_code" class="form-control" placeholder="Only if you are a subcontractor" pattern="[0-9]+" value="{{ employee.user.username|default_if_none:'' }}" onfocus="clearPlaceholder(this)">
+                            {% if employee.subcontractor_code %}
                                 <small class="text-muted">Subcontractor code: {{ employee.user.sccode }}</small>
                             {% endif %}
                         </div>
@@ -38,7 +38,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label style="color: black;">Department</label>
-                                    <input type="text" name="empdep" class="form-control" placeholder="Department" pattern="[A-Za-z0-9]+" value="{{ employee.empdep }}"  onfocus="clearPlaceholder(this)">
+                                    <input type="text" name="department" class="form-control" placeholder="Department" pattern="[A-Za-z0-9]+" value="{{ employee.department }}"  onfocus="clearPlaceholder(this)">
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -51,19 +51,19 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label style="color: black;">Contact [{{ employee.contact }}]</label>
+                            <label style="color: black;">Contact</label>
                             <input type="text" name="contact" class="form-control" placeholder="Contact" pattern="[0-9]+" value="{{ employee.contact }}"  onfocus="clearPlaceholder(this)">
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        <div class="form-group">
-                            <label style="color: black;">Joining Date</label>
-                            <input type="date" name="joindate" class="form-control form-control-sm" placeholder="Joining Date" pattern="[A-Za-z0-9]+" value="{{ employee.joindate|default_if_none:'' }}" required onfocus="clearPlaceholder(this)">
-                        </div>
+                    <div class="form-group">
+                        <label style="color: black;">Joining Date</label>
+                        <input type="date" name="join_date" class="form-control form-control-sm" placeholder="Joining Date" pattern="[A-Za-z0-9]+" value="{{ employee.join_date }}" required readonly>
                     </div>
+                </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label style="color: black;">Gender [{{ employee.gender }}]</label>
+                            <label style="color: black;">Gender</label>
                             <select name="gender" class="form-control" required onfocus="clearPlaceholder(this)">
                                 <option value="">Select Gender</option>
                                 <option value="Male" {% if employee.gender == "Male" %}selected{% endif %}>Male</option>
