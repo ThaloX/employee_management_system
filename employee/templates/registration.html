@@ -39,7 +39,7 @@
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label>Subcontractor security code</label>
-                            <input type="text" name="sccode" class="form-control"
+                            <input type="text" name="subcontractor_code" class="form-control"
                                    placeholder="Only if you are a subcontractor" pattern="[0-9]+">
                         </div>
                     </div>
@@ -86,7 +86,7 @@
 {% endif %}
 {% if error == "Yes"  %}
 <script>
-    alert("Error occurred, please try again");
+    alert("Error: {{ cause }} already exists");
 
 </script>
 {% endif %}

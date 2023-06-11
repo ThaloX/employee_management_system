@@ -1,7 +1,9 @@
+import logging
+
 from django.contrib.auth import logout
+from django.db import OperationalError, IntegrityError
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login
-from django.shortcuts import render
 from django.core.exceptions import ValidationError
 from .models import *
 
@@ -11,13 +13,15 @@ def index(request):
 
 
 def registration(request):
-    error = ""
+    if request.method == "GET":
+        return render(request, 'registration.html')
+
     if request.method == "POST":
-        fn = request.POST['first_name']
-        ln = request.POST['last_name']
-        sc = request.POST['sccode']
-        em = request.POST['mail']
-        pwd = request.POST['password']
+        fn = request.POST.get('first_name')
+        ln = request.POST.get('last_name')
+        sc = request.POST.get('subcontractor_code')
+        em = request.POST.get('mail')
+        pwd = request.POST.get('password')
 
         if not sc:
             username = (fn.lower() + ln.lower()).replace(" ", "")  # Generate username without spaces
@@ -25,37 +29,62 @@ def registration(request):
             username = sc
 
         try:
-            User = get_user_model()
-            user = User.objects.create_user(first_name=fn, last_name=ln, username=username, password=pwd, email=em)
+            user_model = get_user_model()
+            user = user_model.objects.create_user(first_name=fn, last_name=ln, username=username, password=pwd,
+                                                  email=em)
             EmployeeDetails.objects.create(user=user)
-            EmployeeExperience.objects.create(user=user)
-            EmployeeEducation.objects.create(user=user)
+            EmployeeExperience.objects.create(employee=user)
+            EmployeeEducation.objects.create(employee=user)
             error = "No"
-        except:
+            cause = ""
+
+        except IntegrityError as ex:
+            logging.error(ex)
+            cause = ex.args[0].split('.')[1]
             error = "Yes"
-    return render(request, 'registration.html')
+
+        except OperationalError as ex:
+            logging.error(ex)
+            cause = ex.args[0]
+            error = "Yes"
+
+        except Exception as ex:
+            logging.error(ex)
+            cause = ex
+            error = "Yes"
+
+        context = {
+            'error': error,
+            'cause': cause,
+        }
+
+        return render(request, 'registration.html', context)
 
 
 def emp_log(request):
-    error1 = ""
     if request.method == 'POST':
-        mail = request.POST['mail']
-        pwd = request.POST["password"]
+        mail = request.POST.get('mail')
+        pwd = request.POST.get('password')
 
         user_model = get_user_model()
         user = user_model.objects.filter(email=mail).first()
 
-        if user is not None:
+        context = {}
+
+        if user is None:
+            context['error'] = "Yes"
+        else:
             auth_user = authenticate(request, username=user.username, password=pwd)
 
             if auth_user is not None:
                 login(request, auth_user)
-                error1 = "No"
+                context['error'] = "No"
             else:
-                error1 = "Yes"
-        else:
-            error1 = "Yes"
-    return render(request, 'emp_log.html', {'error1': error1})
+                context['error'] = "Yes"
+
+        return render(request, 'emp_log.html', context)
+
+    return render(request, 'emp_log.html')
 
 
 def emp_home(request):
@@ -92,7 +121,8 @@ def profile(request):
             user.save()
             employee.save()
             # Handle successful save or update
-        except:
+        except Exception as ex:
+            logging.error(ex)
             error = "Yes"
 
     context = {
@@ -128,8 +158,8 @@ def experience(request):
             experience_.full_clean()  # Validate the instance
             experience_.save()
             # Handle successful save or update
-        except ValidationError as e:
-            print(e)  # Print validation errors to the console
+        except ValidationError as ex:
+            logging.error(ex)  # Print validation errors to the console
             error = "Yes"
 
     context = {

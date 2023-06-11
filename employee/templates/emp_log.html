@@ -31,14 +31,14 @@
     </div>
 </div>
 
-{% if error1 == "No" %}
+{% if error == "No" %}
 <script>
     alert("Logging In Successful");
     window.location.href = "{% url 'emp_home' %}";
 
 </script>
 {% endif %}
-{% if error1 == "Yes"  %}
+{% if error == "Yes"  %}
 <script>
     alert("Invalid Credentials, please try again");
 
